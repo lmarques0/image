@@ -1,2 +1,2 @@
 # image
-projeto 1° Bimestre
+Prompt Desenvolvido em Sala de Aula 1 bimestre
