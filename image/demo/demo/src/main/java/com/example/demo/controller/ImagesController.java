@@ -1,4 +1,4 @@
-package io.spring.image.demo.controller;
+package com.example.demo.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
