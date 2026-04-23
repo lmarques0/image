@@ -1,7 +1,9 @@
 package io.spring.image.demo.application;
 
-
+import io.spring.image.demo.domain.entity.Image;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("v1/upload")
+@RequestMapping("/upload")
 @Slf4j
+@RequiredArgsConstructor
 public class ImagesController {
+
     //*
     // {"name": "", "size":100} //application/json
     //*
@@ -23,31 +27,21 @@ public class ImagesController {
     //*
 
     @PostMapping
-    public ResponseEntity uploadImage(@RequestParam("file")  MultipartFile file,
+    public ResponseEntity save(@RequestParam("file")  MultipartFile file,
                                       @RequestParam("name")String name,
                                       @RequestParam("tags") List<String> tags
     ) {
         log.info("Recebendo tentativa de upload do arquivo: {}", file.getOriginalFilename());
+        log.info("Content Type:{} ", file.getContentType());
+        log.info("Media Type:{} ", MediaType.valueOf(file.getContentType()));
 
-        try {
-            // Lógica de processamento...
-            if (file.isEmpty()) {
-                log.warn("O arquivo enviado estava vazio!");
-                return ResponseEntity.badRequest().body("Arquivo vazio");
-            }
+        Image image = Image.builder()
+                .name(name)
+                .tags(String.join(",", tags))
+                .size(file.getSize())
+//                    .extension(file.getContentType())
+                .build();
 
-            log.info("Tamanho do arquivo recebido: {} bytes", file.getSize());
-            log.info("Nome definido para a imagem: {}", name);
-            log.info("Tags: {}", tags);
-
-
-            return ResponseEntity.ok("Imagem enviada com Sucesso!!!!");
-        } catch (Exception e) {
-            // Sempre passe a exceção 'e' como último argumento para imprimir o StackTrace
-            log.error("Falha crítica ao processar imagem: ", e);
-            return ResponseEntity.internalServerError().body("Erro no servidor");
-        }
-
-
+        return ResponseEntity.ok().build();
     }
 }
